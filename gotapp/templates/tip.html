@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+<form action="" method="POST">
+    <label for="username">Name</label>
+    <input type="text" id="username" name="username" required
+           minlength="3" maxlength="25" size="25">
+    <h2>Leb oder stirb</h2>
+    {% for category in categories %}
+        <h3> {{ category }} </h3>
+        {% for character in lod %}
+            {% if character[0] == category %}
+                <p> {{ character[1] }} </p>
+                <div>
+                    <input type="radio" id="l-{{ character[1] }}" name="die-tip-{{ character[2] }}" value="1" required>
+                    <label for="l-{{ character[1] }}">lebt</label>
+                    <input type="radio" id="d-{{ character[1] }}" name="die-tip-{{ character[2] }}" value="0">
+                    <label for="d-{{ character[1] }}">stirbt</label>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    <h2>Die Bonusgefilde</h2>
+    {% for q in bonus %}
+        <p>{{ q[2] }}</p>
+        {% if q[1] ==  2%}
+            <div>
+                <input type="radio" id="bonus-{{ q[0] }}-yes" name="bonus-yn-{{ q[0] }}" value="1" required>
+                <label for="bonus-{{ q[0] }}-yes">ja</label>
+                <input type="radio" id="bonus-{{ q[0] }}-no" name="bonus-yn-{{ q[0] }}" value="0">
+                <label for="bonus-{{ q[0] }}-no">nein</label>
+                </div>
+        {% else %}
+            <select id="characterselect" name="bonus-dd-{{ q[0] }}" required>
+                <option value="">Treffe eine Wahl</option>
+                {% for character in lod %}
+                <option value="{{ character[2] }}">{{ character[1] }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+    {% endfor %}
+    <div class="button">
+        <button type="submit">Send your message</button>
+    </div>
+</form>
+    
+
+{% endblock content %}
+

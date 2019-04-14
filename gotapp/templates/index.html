@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Punkte</th>
+		<th>Bonus Punkte</th>
+		<th>Gesamt</th>
+	</tr>
+	{% for user in scores %}
+	<tr>
+		<td>{{ user.name }}</td>
+		<td>{{ user.points }}</td>
+		<td>{{ user.bonus }}</td>
+		<td>{{ user.total }}</td>
+	</tr>
+	{% endfor %}
+</table>	
+{% endblock content %}
+
