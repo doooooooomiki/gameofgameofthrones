@@ -12,6 +12,7 @@ def dbsitter_args (function):
     return result_set
   return wrapper
 
+
 def dbsitter (function):
   def wrapper():
     conn = sqlite3.connect(DBPATH)
