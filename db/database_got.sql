@@ -116,8 +116,6 @@ CREATE TABLE die_solution (
     character integer not null,
     solution integer default -1,
     foreign key (character) references character (character_id)
-
-
 );
 
 INSERT INTO die_solution VALUES(1,1,-1);
@@ -166,13 +164,13 @@ CREATE TABLE solution_dd (
     bonus_question integer not null,
     solution integer default -1,
     foreign key (bonus_question) references bonus_question (bonus_question_id)
-
 );
 
 INSERT INTO solution_dd VALUES(1,3,-1);
 INSERT INTO solution_dd VALUES(2,4,-1);
 INSERT INTO solution_dd VALUES(3,5,-1);
 INSERT INTO solution_dd VALUES(4,10,-1);
+
 CREATE TABLE solution_yn (
     solution_yn_id integer primary key,
     bonus_question integer not null,
@@ -202,7 +200,6 @@ CREATE TABLE bonus_question (
     question text not null,
     value integer not null,
     foreign key (bonus_type) references bonus_type (bonus_type_id)
-
 );
 
 INSERT INTO bonus_question VALUES(1,2,'Ist Daenerys schwanger?',2);
