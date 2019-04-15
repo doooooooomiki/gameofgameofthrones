@@ -301,6 +301,16 @@ inner join character as char
 on 
 cat.category_id = char.category;
 
+CREATE VIEW die_tip_score (user, points)
+as 
+select user, sum(is_correct) as points from die_tip group by user;
+CREATE TRIGGER calc_total_points
+after update on points
+begin
+    update points
+    set total = points + bonus;
+end;
+
 CREATE TRIGGER create_points_row_for_new_user
 after insert on user
 begin 
@@ -348,16 +358,6 @@ begin
     set bonus = ifnull((select bonus.bonus
                         from bonus
                         where bonus.user = points.user), 0);
-end;
-
-CREATE VIEW die_tip_score (user, points)
-as 
-select user, sum(is_correct) as points from die_tip group by user;
-CREATE TRIGGER calc_total_points
-after update on points
-begin
-    update points
-    set total = points + bonus;
 end;
 
 CREATE TRIGGER create_dd_sol_row
