@@ -1,13 +1,16 @@
 PRAGMA foreign_keys=ON;
 BEGIN TRANSACTION;
+
 CREATE TABLE user (
     user_id integer primary key,
     user_name text unique
 );
+
 CREATE TABLE category (
     category_id integer primary key,
     category text not null unique
 );
+
 INSERT INTO category VALUES(1,'Haus Stark');
 INSERT INTO category VALUES(2,'Haus Arryn');
 INSERT INTO category VALUES(3,'Haus Targaryen');
@@ -22,12 +25,14 @@ INSERT INTO category VALUES(11,'Drachen');
 INSERT INTO category VALUES(12,'Haus Tully');
 INSERT INTO category VALUES(13,'Haus Reed');
 INSERT INTO category VALUES(14,'Schattenwölfe');
+
 CREATE TABLE character (
     character_id integer primary key,
     category integer not null,
     character_name text not null,
     foreign key (category) references category (category_id)
 );
+
 INSERT INTO character VALUES(1,1,'Jon Snow');
 INSERT INTO character VALUES(2,1,'Sansa Stark');
 INSERT INTO character VALUES(3,1,'Bran Stark');
@@ -68,6 +73,7 @@ INSERT INTO character VALUES(37,12,'Edmure Tully');
 INSERT INTO character VALUES(38,13,'Meera Reed');
 INSERT INTO character VALUES(39,14,'Nymeria');
 INSERT INTO character VALUES(40,14,'Geist');
+
 CREATE TABLE die_tip (
     die_tip_id integer primary key,
     user integer not null,
@@ -77,12 +83,15 @@ CREATE TABLE die_tip (
     foreign key(user) references user (user_id),
     foreign key (character) references character (character_id)
 );
+
 CREATE TABLE bonus_type (
     bonus_type_id integer primary key,
     bonus_type text not null unique
 );
+
 INSERT INTO bonus_type VALUES(1,'dropdown');
 INSERT INTO bonus_type VALUES(2,'yes/no');
+
 CREATE TABLE answer_dd (
     answer_dd_id integer primary key,
     user integer not null,
@@ -92,6 +101,7 @@ CREATE TABLE answer_dd (
     foreign key (bonus_question) references bonus_question (bonus_question_id),
     foreign key (answer) references character (character_id)   
 );
+
 CREATE TABLE answer_yn (
     answer_yn_id integer primary key,
     user integer not null,
@@ -100,6 +110,7 @@ CREATE TABLE answer_yn (
     foreign key (user) references user (user_id),
     foreign key (bonus_question) references bonus_question (bonus_question_id)
 );
+
 CREATE TABLE die_solution (
     die_solution_id integer primary key,
     character integer not null,
@@ -108,6 +119,7 @@ CREATE TABLE die_solution (
 
 
 );
+
 INSERT INTO die_solution VALUES(1,1,-1);
 INSERT INTO die_solution VALUES(2,2,-1);
 INSERT INTO die_solution VALUES(3,3,-1);
@@ -148,6 +160,7 @@ INSERT INTO die_solution VALUES(37,37,-1);
 INSERT INTO die_solution VALUES(38,38,-1);
 INSERT INTO die_solution VALUES(39,39,-1);
 INSERT INTO die_solution VALUES(40,40,-1);
+
 CREATE TABLE solution_dd (
     solution_dd_id integer primary key,
     bonus_question integer not null,
@@ -155,6 +168,7 @@ CREATE TABLE solution_dd (
     foreign key (bonus_question) references bonus_question (bonus_question_id)
 
 );
+
 INSERT INTO solution_dd VALUES(1,3,-1);
 INSERT INTO solution_dd VALUES(2,4,-1);
 INSERT INTO solution_dd VALUES(3,5,-1);
@@ -165,12 +179,14 @@ CREATE TABLE solution_yn (
     solution integer default -1 not null,
     foreign key (bonus_question) references bonus_question (bonus_question_id)
 );
+
 INSERT INTO solution_yn VALUES(1,1,-1);
 INSERT INTO solution_yn VALUES(2,2,-1);
 INSERT INTO solution_yn VALUES(3,6,-1);
 INSERT INTO solution_yn VALUES(4,7,-1);
 INSERT INTO solution_yn VALUES(5,8,-1);
 INSERT INTO solution_yn VALUES(6,9,-1);
+
 CREATE TABLE points (
     points_id integer primary key,
     user integer not null,
@@ -179,6 +195,7 @@ CREATE TABLE points (
     total integer default 0,
     foreign key (user) references user (user_id)
 );
+
 CREATE TABLE bonus_question (
     bonus_question_id integer primary key,
     bonus_type integer not null,    
@@ -187,6 +204,7 @@ CREATE TABLE bonus_question (
     foreign key (bonus_type) references bonus_type (bonus_type_id)
 
 );
+
 INSERT INTO bonus_question VALUES(1,2,'Ist Daenerys schwanger?',2);
 INSERT INTO bonus_question VALUES(2,2,'Wird Cercei''s Kind geboren?',2);
 INSERT INTO bonus_question VALUES(3,1,'Wer tötet den Nachtkönig?',2);
@@ -197,6 +215,7 @@ INSERT INTO bonus_question VALUES(7,2,'Ist Bran der Nachtkönig?',3);
 INSERT INTO bonus_question VALUES(8,2,'Werden Tormund und Brienne ein Paar?',1);
 INSERT INTO bonus_question VALUES(9,2,'Wird Sansa zu Tyrion zurückkehren?',1);
 INSERT INTO bonus_question VALUES(10,1,'Wer ist Azor Ahai (Krieger/in der Lichts)?',5);
+
 CREATE VIEW dd_ans_vs_sol (user, bonus, answer, solution)
 as
 select a.user, a.bonus_question, a.answer, s.solution 
@@ -204,6 +223,7 @@ from answer_dd as a
 inner join solution_dd as s
 on
 a.bonus_question = s.bonus_question;
+
 CREATE VIEW dd_multiplyer (user, multiplyer, value)
 as
 select dd.user, 
@@ -213,16 +233,19 @@ from dd_ans_vs_sol as dd
 inner join bonus_question as bq
 on 
 dd.bonus = bq.bonus_question_id;
+
 CREATE VIEW dd_awarding_of_score (user, dd_bonus)
 as
 select user, (multiplyer * value) as dd_bonus 
 from dd_multiplyer;
+
 CREATE VIEW dd_compact_score(user, dd_bonus)
 as
 select user, sum(dd_bonus) as dd_bonus 
 from dd_awarding_of_score
 group by user
 order by dd_bonus desc;
+
 CREATE VIEW bonus (user, bonus)
 as
 select dd.user, (dd_bonus + yn_bonus) as bonus 
@@ -230,6 +253,7 @@ from dd_compact_score as dd
 inner join yn_compact_score as yn
 on
 dd.user = yn.user;
+
 CREATE VIEW yn_ans_vs_sol (user, bonus, answer, solution)
 as
 select a.user, a.bonus_question, a.answer, s.solution 
@@ -237,6 +261,7 @@ from answer_yn as a
 inner join solution_yn as s
 on
 a.bonus_question = s.bonus_question;
+
 CREATE VIEW yn_multiplyer (user, multiplyer, value)
 as
 select yn.user, 
@@ -246,16 +271,19 @@ from yn_ans_vs_sol as yn
 inner join bonus_question as bq
 on
 yn.bonus = bq.bonus_question_id;
+
 CREATE VIEW yn_awarding_of_score (user, yn_bonus)
 as
 select user, (multiplyer * value) as yn_bonus
 from yn_multiplyer;
+
 CREATE VIEW yn_compact_score (user, yn_bonus)
 as
 select user, sum(yn_bonus) as yn_bonus 
 from yn_awarding_of_score
 group by user
 order by yn_bonus desc;
+
 CREATE VIEW score (name, points, bonus, total) 
 as
 select u.user_name, p.points, p.bonus, p.total 
@@ -267,6 +295,7 @@ order by p.total desc,
          p.bonus desc, 
          p.points desc, 
          u.user_name;
+         
 CREATE VIEW lives_or_dies (category, character, character_id)
 as
 select cat.category, char.character_name, char.character_id 
@@ -274,18 +303,21 @@ from category as cat
 inner join character as char 
 on 
 cat.category_id = char.category;
+
 CREATE TRIGGER create_points_row_for_new_user
 after insert on user
 begin 
     insert into points (user) values
     ((select max(user_id) from user));
 end;
+
 CREATE TRIGGER create_die_sol_row
 after insert on character
 begin
     insert into die_solution (character) values
     ((select max(character_id) from character));
 end;
+
 CREATE TRIGGER update_correctness_of_tip
 after update of solution on die_solution
 begin
@@ -293,6 +325,7 @@ begin
     set is_correct = (select case when die_tip.tip = NEW.solution then 1 else 0 end)
     where die_tip.character = NEW.character;
 end;
+
 CREATE TRIGGER update_points
 after update of is_correct on die_tip
 begin
@@ -301,6 +334,7 @@ begin
                          from die_tip_score
                          where points.user = die_tip_score.user), 0);
 end;
+
 CREATE TRIGGER update_bonus_dd
 after update on solution_dd
 begin
@@ -309,6 +343,7 @@ begin
                         from bonus 
                         where bonus.user = points.user), 0);
 end;
+
 CREATE TRIGGER update_bonus_yn
 after update on solution_yn
 begin
@@ -317,6 +352,7 @@ begin
                         from bonus
                         where bonus.user = points.user), 0);
 end;
+
 CREATE VIEW die_tip_score (user, points)
 as 
 select user, sum(is_correct) as points from die_tip group by user;
@@ -326,14 +362,17 @@ begin
     update points
     set total = points + bonus;
 end;
+
 CREATE TRIGGER create_dd_sol_row
 after insert on bonus_question when NEW.bonus_type = 1
 begin
     insert into solution_dd (bonus_question) values (NEW.bonus_question_id);
 end;
+
 CREATE TRIGGER create_yn_sol_row
 after insert on bonus_question when NEW.bonus_type = 2
 begin
     insert into solution_yn (bonus_question) values (NEW.bonus_question_id);
 end;
+
 COMMIT;
