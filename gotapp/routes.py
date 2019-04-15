@@ -47,24 +47,3 @@ def tipp():
 
     
     return render_template('tip.html', categories=categories, lod=lod, bonus=bonus)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
