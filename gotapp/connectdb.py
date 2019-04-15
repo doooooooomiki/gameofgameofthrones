@@ -118,20 +118,3 @@ def insert_yntip(conn, many):
   c = conn.cursor()
   c.executemany('INSERT INTO answer_yn (user, bonus_question, answer) VALUES (?, ?, ?)', *many)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
