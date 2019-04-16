@@ -3,12 +3,12 @@ BEGIN TRANSACTION;
 
 CREATE TABLE user (
     user_id integer primary key,
-    user_name text unique
+    user_name text not null unique
 );
 
 CREATE TABLE category (
     category_id integer primary key,
-    category text not null unique
+    category text not null unique 
 );
 
 INSERT INTO category VALUES(1,'Haus Stark');
